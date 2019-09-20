@@ -32,13 +32,20 @@ const AddToDo = memo(class AddTodo extends React.Component {
         })
     }
     saveTask = () => {
-        if (this.state.title && this.state.title.trim()) {
-            const task = { title: this.state.title };
+        var title = this.state.title;
+        if (title) title = title.trim();
+        if (!title) {
+            this.setState({ errorMessage: "Title is required !" });
+            return;
+        }
+
+        if (title.length <= 50) {
+            const task = { _id: Date.now(), title: this.state.title };
             this.props.dispatch(createTask(task));
         }
         else {
             this.setState({
-                errorMessage: "Title is required"
+                errorMessage: "Title is too long !"
             })
         }
     }
@@ -91,6 +98,7 @@ const AddToDo = memo(class AddTodo extends React.Component {
                     <Grid xs={10} md={11} item style={{ paddingRight: 16 }}>
                         <TextField
                             placeholder="Add Todo here"
+                            onKeyPress={(event) => event.key === 'Enter' ? this.saveTask() : null}
                             value={this.state.title}
                             onChange={this.onInputChange}
                             fullWidth
@@ -109,6 +117,7 @@ const AddToDo = memo(class AddTodo extends React.Component {
                     <Grid xs={10} md={11} item style={{ paddingRight: 16 }}>
                         <TextField
                             placeholder="Search"
+                            onKeyPress={(event) => event.key === 'Enter' ? this.searchTask() : null}
                             value={this.state.search}
                             onChange={this.onSearchInputChange}
                             fullWidth
@@ -128,12 +137,14 @@ const AddToDo = memo(class AddTodo extends React.Component {
                         <FormControlLabel
                             control={<Checkbox checked={this.state.filters.completed} onChange={this.completed} />}
                             label="Completed"
+                            onKeyPress={this.completed}
                         />
                     </Grid>
                     <Grid xs={2} style={{ marginTop: 8 }} item>
                         <FormControlLabel
                             control={<Checkbox checked={this.state.filters.reverseOrder} onChange={this.reverseOrder} />}
                             label="Reverse Order"
+                            onKeyPress={this.reverseOrder}
                         />
                     </Grid>
                     <Grid xs={7} style={{ marginTop: 8 }} item>

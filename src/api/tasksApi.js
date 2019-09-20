@@ -60,13 +60,22 @@ export function updateTask(task) {
     });
 }
 
-export function deleteTask(task) {
-    const req = axios({
+export async function deleteTask(_id, query) {
+    const deleteReq = axios({
         method: "delete",
-        url: "https://todoapp-api.safagunay.now.sh/tasks/" + task._id
+        url: "https://todoapp-api.safagunay.now.sh/tasks/" + _id
     });
-    return req.then(res => {
-        if (res.status === 200)
-            return res.data;
+    const getReq = axios({
+        method: "get",
+        url: "https://todoapp-api.safagunay.now.sh/tasks" + (query ? query : "")
     });
+    try {
+        await deleteReq;
+        const getRes = await getReq;
+        const tasks = getRes.data.tasks;
+        return tasks;
+    } catch (err) {
+        return Promise.reject(err);
+    }
+
 }

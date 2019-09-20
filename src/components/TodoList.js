@@ -1,19 +1,24 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { List, Paper } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { updateTask, deleteTask } from "../actions/taskActions";
 
 import TodoListItem from './TodoListItem';
 
-const TodoList = memo(class TodoList extends React.Component {
-    onItemCheck(idx) {
-        let task = this.props.tasks[idx];
-        task.completedAt = !task.completedAt
-        this.props.dispatch(updateTask(task));
-    }
-    onItemRemove(idx) {
-        let task = this.props.tasks[idx];
-        this.props.dispatch(deleteTask(task));
+class TodoList extends React.Component {
+    itemUpdate = (updateInfo) => {
+        if (updateInfo.deleted) {
+            this.props.dispatch(deleteTask(updateInfo._id, this.props.query));
+        }
+        else {
+            let task = this.props.tasks.find(
+                task => task._id === updateInfo._id
+            );
+            if (!task) throw Error("TodoList and TodoListItems are not synchronized!");
+            if (updateInfo.checked !== undefined) task.completedAt = updateInfo.checked;
+            if (updateInfo.title) task.title = updateInfo.title;
+            this.props.dispatch(updateTask(task));
+        }
     }
     render = () => (
         <>
@@ -25,8 +30,7 @@ const TodoList = memo(class TodoList extends React.Component {
                                 {...task}
                                 key={task._id}
                                 divider={idx !== this.props.tasks.length - 1}
-                                onButtonClick={() => this.onItemRemove(idx)}
-                                onCheckBoxToggle={() => this.onItemCheck(idx)}
+                                onItemUpdate={(updateInfo) => this.itemUpdate(updateInfo)}
                             />
                         ))}
                     </List>
@@ -34,7 +38,7 @@ const TodoList = memo(class TodoList extends React.Component {
             )}
         </>
     );
-});
+};
 
 function mapStateToProps(state, ownProps) {
     return {
