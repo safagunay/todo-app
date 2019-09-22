@@ -2,18 +2,15 @@ import React from 'react';
 import Layout from "./Layout";
 import AddTodo from "./AddTodo";
 import TodoList from './TodoList';
-import { connect } from "react-redux";
-import { loadTasks } from "../actions/taskActions";
+import withInfiniteScroll from './hoc/InfiniteScrollList';
 class App extends React.Component {
-  componentDidMount() {
-    this.props.dispatch(loadTasks());
-  }
   render() {
+    const InfiniteScrollList = withInfiniteScroll(TodoList);
     return (
       <div className="App" >
         <Layout>
           <AddTodo />
-          <TodoList />
+          <InfiniteScrollList />
         </Layout>
       </div>
     );
@@ -21,4 +18,4 @@ class App extends React.Component {
 
 }
 
-export default connect()(App);
+export default App;

@@ -20,11 +20,15 @@ class TodoList extends React.Component {
             this.props.dispatch(updateTask(task));
         }
     }
+
+    componentDidUpdate() {
+        console.log("list did update:", this.props.tasks);
+    }
     render = () => (
         <>
             {this.props.tasks.length > 0 && (
                 <Paper style={{ margin: 16 }}>
-                    <List style={{ overflow: 'scroll' }}>
+                    <List style={{ overflow: 'scroll' }} >
                         {this.props.tasks.map((task, idx) => (
                             <TodoListItem
                                 {...task}
@@ -43,8 +47,8 @@ class TodoList extends React.Component {
 function mapStateToProps(state, ownProps) {
     return {
         tasks: Object.assign([], state.tasks),
-        page: state.page,
-        query: state.query
+        page: ownProps.page ? ownProps.page : "" + state.page,
+        query: ownProps.query ? ownProps.query : "" + state.query
     }
 }
 

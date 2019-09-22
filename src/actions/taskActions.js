@@ -2,8 +2,11 @@ import * as types from './actionTypes';
 import * as tasksApi from "../api/tasksApi";
 
 export function loadTasksSuccess(data, query) {
-    data.query = query;
-    return { type: types.LOAD_TASKS_SUCCESS, data };
+    return { type: types.LOAD_TASKS_SUCCESS, data, query };
+}
+
+export function loadMoreTasksSuccess(data) {
+    return { type: types.LOAD_MORE_TASKS_SUCCESS, data };
 }
 
 export function updateTaskSuccess(task) {
@@ -16,6 +19,13 @@ export function createTaskSuccess(task) {
 
 export function deleteTaskSuccess(_id, tasks) {
     return { type: types.DELETE_TASK_SUCCESS, _id, tasks }
+}
+
+export function loadMoreTasks(pagedQuery) {
+    return function (dispatch) {
+        return tasksApi.loadTasks(pagedQuery).then(data =>
+            dispatch(loadMoreTasksSuccess(data)))
+    }
 }
 
 function createTaskTemp(task) {
@@ -39,7 +49,6 @@ export function createTask(task) {
 }
 
 export function loadTasks(query) {
-    console.log("query", query);
     return function (dispatch) {
         return tasksApi.loadTasks(query).then(data => {
             dispatch(loadTasksSuccess(data, query))

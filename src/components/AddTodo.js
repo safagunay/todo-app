@@ -79,15 +79,22 @@ const AddToDo = memo(class AddTodo extends React.Component {
         }));
     }
     resetFilters = () => {
-        this.props.dispatch(loadTasks());
+        this.setState({
+            search: "",
+            filters: {
+                completed: false,
+                reverseOrder: false
+            }
+        })
+        this.props.dispatch(loadTasks(""));
     }
     applyFilters = () => {
         var query = "?";
         if (this.state.search) {
-            query += "search=" + this.state.search.trim().replace(/\s+/g, ';') + "&";
+            query += "search=" + this.state.search.trim().replace(/\s+/g, ';');
         }
-        query += this.state.filters.completed ? "completed&" : "incompleted&";
-        query += this.state.filters.reverseOrder ? "oldest" : "";
+        query += this.state.filters.completed ? "&completed" : "&incompleted";
+        query += this.state.filters.reverseOrder ? "&oldest" : "";
         this.props.dispatch(loadTasks(query));
     }
     render() {
@@ -95,7 +102,7 @@ const AddToDo = memo(class AddTodo extends React.Component {
             <Paper style={{ margin: 16, padding: 16 }}>
                 {this.state.errorMessage ? <AlertDialog message={this.state.errorMessage} onClose={this.onClose} /> : null}
                 <Grid container>
-                    <Grid xs={10} md={11} item style={{ paddingRight: 16 }}>
+                    <Grid xs={9} md={11} item style={{ paddingRight: 16 }}>
                         <TextField
                             placeholder="Add Todo here"
                             onKeyPress={(event) => event.key === 'Enter' ? this.saveTask() : null}
@@ -114,7 +121,7 @@ const AddToDo = memo(class AddTodo extends React.Component {
                             Add
                         </Button>
                     </Grid>
-                    <Grid xs={10} md={11} item style={{ paddingRight: 16 }}>
+                    <Grid xs={9} md={11} item style={{ paddingRight: 16 }}>
                         <TextField
                             placeholder="Search"
                             onKeyPress={(event) => event.key === 'Enter' ? this.searchTask() : null}
@@ -133,27 +140,27 @@ const AddToDo = memo(class AddTodo extends React.Component {
                             Search
                         </Button>
                     </Grid>
-                    <Grid xs={2} style={{ marginTop: 8 }} item>
+                    <Grid md={2} style={{ marginTop: 8 }} item>
                         <FormControlLabel
                             control={<Checkbox checked={this.state.filters.completed} onChange={this.completed} />}
                             label="Completed"
                             onKeyPress={this.completed}
                         />
                     </Grid>
-                    <Grid xs={2} style={{ marginTop: 8 }} item>
+                    <Grid md={2} style={{ marginTop: 8 }} item>
                         <FormControlLabel
                             control={<Checkbox checked={this.state.filters.reverseOrder} onChange={this.reverseOrder} />}
                             label="Reverse Order"
                             onKeyPress={this.reverseOrder}
                         />
                     </Grid>
-                    <Grid xs={7} style={{ marginTop: 8 }} item>
+                    <Grid md={7} justify="center" style={{ marginTop: 8 }} item container>
                         <Fab onClick={this.resetFilters} color="primary" variant="extended" aria-label="Reset">
                             <ResetIcon />
                             Reset
                         </Fab>
                     </Grid>
-                    <Grid xs={1} style={{ marginTop: 8 }} item>
+                    <Grid md={1} style={{ marginTop: 8 }} item container>
                         <Button
                             fullWidth
                             color="secondary"

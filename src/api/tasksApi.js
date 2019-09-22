@@ -28,7 +28,7 @@ export function checkAuth() {
 export function loadTasks(query) {
     const req = axios({
         method: "get",
-        url: "https://todoapp-api.safagunay.now.sh/tasks" + (query ? query : "")
+        url: "https://todoapp-api.safagunay.now.sh/tasks" + query
     });
     return req.then(res => {
         if (res.status === 200)

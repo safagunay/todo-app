@@ -5,6 +5,8 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import store from './store/configureStore';
 import { checkAuth } from "./api/tasksApi";
+import { loadTasks } from "./actions/taskActions";
+
 
 async function startApp() {
     var authenticated = false;
@@ -14,6 +16,7 @@ async function startApp() {
         console.log(err);
     }
     if (authenticated) {
+        await store.dispatch(loadTasks(""));
         ReactDOM.render(
             <Provider store={store}>
                 <App />
@@ -21,7 +24,7 @@ async function startApp() {
             document.getElementById('root'));
     }
     else {
-        ReactDOM.render(<h4>Invalid Url !</h4>, document.getElementById('root'));
+        ReactDOM.render(<h4>{"Invalid Url !"}</h4>, document.getElementById('root'));
     }
 }
 
