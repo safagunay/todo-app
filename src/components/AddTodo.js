@@ -7,6 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Fab from '@material-ui/core/Fab';
 import ResetIcon from '@material-ui/icons/Refresh';
+import SelectStatus from './SelectStatus';
 
 const AddToDo = memo(class AddTodo extends React.Component {
     constructor() {
@@ -16,7 +17,7 @@ const AddToDo = memo(class AddTodo extends React.Component {
             search: "",
             errorMessage: null,
             filters: {
-                completed: false,
+                completed: "all",
                 reverseOrder: false
             }
         }
@@ -62,11 +63,11 @@ const AddToDo = memo(class AddTodo extends React.Component {
             errorMessage: null
         });
     }
-    completed = () => {
+    completed = (val) => {
         this.setState(prevState => ({
             filters: {
-                completed: !prevState.filters.completed,
-                reverseOrder: prevState.filters.reverseOrder
+                completed: val,
+                reverseOrder: this.state.filters.reverseOrder
             }
         }));
     }
@@ -82,7 +83,7 @@ const AddToDo = memo(class AddTodo extends React.Component {
         this.setState({
             search: "",
             filters: {
-                completed: false,
+                completed: "all",
                 reverseOrder: false
             }
         })
@@ -93,7 +94,8 @@ const AddToDo = memo(class AddTodo extends React.Component {
         if (this.state.search) {
             query += "search=" + this.state.search.trim().replace(/\s+/g, ';');
         }
-        query += this.state.filters.completed ? "&completed" : "&incompleted";
+        if (this.state.filters.completed !== "all")
+            query += this.state.filters.completed === "complete" ? "&completed" : "&incompleted";
         query += this.state.filters.reverseOrder ? "&oldest" : "";
         this.props.dispatch(loadTasks(query));
     }
@@ -141,13 +143,9 @@ const AddToDo = memo(class AddTodo extends React.Component {
                         </Button>
                     </Grid>
                     <Grid md={2} style={{ marginTop: 8 }} item>
-                        <FormControlLabel
-                            control={<Checkbox checked={this.state.filters.completed} onChange={this.completed} />}
-                            label="Completed"
-                            onKeyPress={this.completed}
-                        />
+                        <SelectStatus onChange={this.completed} val={this.state.filters.completed} />
                     </Grid>
-                    <Grid md={2} style={{ marginTop: 8 }} item>
+                    <Grid md={2} style={{ marginTop: 16 }} item>
                         <FormControlLabel
                             control={<Checkbox checked={this.state.filters.reverseOrder} onChange={this.reverseOrder} />}
                             label="Reverse Order"
